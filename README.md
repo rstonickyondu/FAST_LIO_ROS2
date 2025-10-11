@@ -197,3 +197,32 @@ The main structure of this UAV is 3d printed (Aluminum or PLA), the .stl file wi
 ## 6.Acknowledgments
 
 Thanks for LOAM(J. Zhang and S. Singh. LOAM: Lidar Odometry and Mapping in Real-time), [Livox_Mapping](https://github.com/Livox-SDK/livox_mapping), [LINS](https://github.com/ChaoqinRobotics/LINS---LiDAR-inertial-SLAM) and [Loam_Livox](https://github.com/hku-mars/loam_livox).
+
+
+Summary of what’s in README
+
+What changed
+publish_tf param to enable/disable TF broadcasting
+odom_frame_id, base_frame_id, path_frame_id parameters to control frames
+Parameters are explicitly declared and logged at startup
+TF send is guarded; broadcaster only created when enabled
+Launch cleaned to rely on YAML for behavior
+Where it’s wired
+Code: laserMapping.cpp
+Launch: launch/mapping.launch.py
+Example config: r1_fastlio.yaml (your file)
+Configure
+YAML-driven settings for publish_tf and frames
+Verify
+Startup log line with effective values
+ros2 param get to query params
+Topic checks (/Odometry, /path)
+Troubleshooting and performance notes
+Launch summary
+What to do next
+
+Rebuild and relaunch so the new explicit declarations and logs take effect, then confirm:
+The startup log prints publish_tf=false, odom_frame_id='odom', base_frame_id='base_link', path_frame_id='odom'
+Odometry message shows those frames
+No dynamic TF from FAST-LIO appears when publish_tf=false (static TFs from robot_state_publisher are still expected)
+If you want, I can also add a one-shot log on the first Odometry publish to print the actual frames used in that message for triple confirmation.
